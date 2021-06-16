@@ -6,7 +6,7 @@
 #include <QTimer>
 #include "mypushbutton.h"
 #include "chooselevelscene.h"
-
+#include <QSound>       //多模块媒体下的音效
 
 MainScene::MainScene(QWidget *parent) :
     QMainWindow(parent),
@@ -23,23 +23,32 @@ MainScene::MainScene(QWidget *parent) :
     //设置退出按钮
     connect(ui->actionquit, &QAction::triggered, this, &MainScene::close);
 
+    QSound *startSound = new QSound(":res/TapButtonSound.wav", this);
+
     MyPushButton *StartBtn = new MyPushButton(":/res/MenuSceneStartButton.png");
     StartBtn->setParent(this);
     StartBtn->move(this->width()*0.5-StartBtn->width()*0.5, this->height()*0.7);
 
     ChooseLevelScene *chooseScene = new ChooseLevelScene;
-    connect(chooseScene, &ChooseLevelScene::chooseSceneBack, [=](){
+    connect(chooseScene, &ChooseLevelScene::chooseSceneBack, this, [=](){
+        this->setGeometry(chooseScene->geometry());
         chooseScene->hide();
         this->show();
     });
 
     connect(StartBtn, &MyPushButton::clicked, [=](){
         qDebug() << "开始按钮被按下";
+
+        //播放开始音效资源
+        startSound->play();
+
+        //弹跳效果
         StartBtn->zoom1();
         StartBtn->zoom2();
 
         //延时进入到选择关卡
         QTimer::singleShot(100, this, [=](){
+            chooseScene->setGeometry(this->geometry());
             //自身隐藏
             this->hide();
             //进入到选择关卡场景中
@@ -60,7 +69,7 @@ void MainScene::paintEvent(QPaintEvent *event)
        qDebug() << "背景图片加载失败";
        return;
     }
-    painter.drawPixmap(0, 0, pix.width(), pix.height(), pix);
+    painter.drawPixmap(0, 0, this->width(), this->height(), pix);
 
     //加载标题
     ret = pix.load(":/res/Title.png");
