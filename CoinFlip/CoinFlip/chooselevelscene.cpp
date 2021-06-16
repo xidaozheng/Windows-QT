@@ -5,6 +5,7 @@
 #include <QDebug>
 #include "mypushbutton.h"
 #include <QTimer>
+#include <QLabel>
 
 
 ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
@@ -40,6 +41,43 @@ ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
             emit this->chooseSceneBack();
         });
     });
+
+    //创建选择关卡的按钮
+    for(int i=0; i<20; i++)
+    {
+        MyPushButton *btn = new MyPushButton(":/res/LevelIcon.png");
+        btn->setParent(this);
+        btn->move(25+i%4*70, 130+i/4*70);
+
+        //监听每个按钮的点击事件
+        connect(btn, &MyPushButton::clicked, [=](){
+            QString str = QString("您选择的是第%1关").arg(i+1);
+            qDebug() << str;
+
+            //进入到游戏界面
+            this->hide();
+            play = new playscene(i+1);
+            play->show();
+
+            connect(play, &playscene::chooseSceneBack, [=](){
+                this->show();
+                delete play;
+                play = NULL;
+            });
+        });
+
+        QLabel *label = new QLabel;
+        label->setParent(this);
+        label->setFixedSize(btn->width(), btn->height());
+        label->setText(QString::number(i+1));
+        label->move(25+i%4*70, 130+i/4*70);
+
+        //设置label上的文字对其方式 水平居中和垂直居中
+        label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+
+        //设置让鼠标进行穿透 51号属性
+        label->setAttribute(Qt::WA_TransparentForMouseEvents);
+    }
 }
 
 void ChooseLevelScene::paintEvent(QPaintEvent *event)
