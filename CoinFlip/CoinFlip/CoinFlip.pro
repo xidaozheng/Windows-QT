@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -28,13 +28,17 @@ SOURCES += \
         mainscene.cpp \
     mypushbutton.cpp \
     chooselevelscene.cpp \
-    playscene.cpp
+    playscene.cpp \
+    mycoin.cpp \
+    dataconfig.cpp
 
 HEADERS += \
         mainscene.h \
     mypushbutton.h \
     chooselevelscene.h \
-    playscene.h
+    playscene.h \
+    mycoin.h \
+    dataconfig.h
 
 FORMS += \
         mainscene.ui

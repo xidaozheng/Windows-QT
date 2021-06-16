@@ -6,6 +6,7 @@
 #include "mypushbutton.h"
 #include <QTimer>
 #include <QLabel>
+#include <QSound>
 
 
 ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
@@ -30,12 +31,19 @@ ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
         close();
     });
 
+    //选择关卡音效
+    QSound *chooseSound = new QSound(":/res/TapButtonSound.wav", this);
+    //返回按钮音效
+    QSound *backSound = new QSound(":/res/BackButtonSound.wav", this);
+
     //创建返回按钮
     MyPushButton *backBtn = new MyPushButton(":/res/BackButton.png", ":/res/BackButtonSelected.png");
     backBtn->setParent(this);
     backBtn->move(this->width()-backBtn->width(), this->height()-backBtn->height());
 
     connect(backBtn, &MyPushButton::clicked, [=](){
+        //播放返回按钮音效
+        backSound->play();
         //使用emit 将信号发出去
         QTimer::singleShot(100, this, [=](){
             emit this->chooseSceneBack();
@@ -51,18 +59,23 @@ ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
 
         //监听每个按钮的点击事件
         connect(btn, &MyPushButton::clicked, [=](){
+            chooseSound->play();
             QString str = QString("您选择的是第%1关").arg(i+1);
             qDebug() << str;
 
             //进入到游戏界面
             this->hide();
             play = new playscene(i+1);
+            //设置游戏场景的初始位置
+            play->setGeometry(this->geometry());
+
             play->show();
 
             connect(play, &playscene::chooseSceneBack, [=](){
-                this->show();
+                this->setGeometry(play->geometry());
                 delete play;
                 play = NULL;
+                this->show();
             });
         });
 
