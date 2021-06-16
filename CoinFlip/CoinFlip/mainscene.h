@@ -14,6 +14,8 @@ class MainScene : public QMainWindow
 public:
     explicit MainScene(QWidget *parent = 0);
     ~MainScene();
+public:
+    void paintEvent(QPaintEvent *event);
 
 private:
     Ui::MainScene *ui;
