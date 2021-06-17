@@ -39,7 +39,7 @@ playscene::playscene(int levelNum)
     //设置图标
     this->setWindowIcon(QIcon(":/res/Coin0001.png"));
     //设置标题
-    this->setWindowTitle("选择关卡场景");
+    this->setWindowTitle("游戏场景");
 
     //创建菜单栏
     QMenuBar *bar = menuBar();
